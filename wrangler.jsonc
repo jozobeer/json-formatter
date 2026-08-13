@@ -1,0 +1,6 @@
+{
+  "name": "json-formatter",
+  "compatibility_date": "2026-07-01",
+  "assets": { "directory": "./public" },
+  "routes": [{ "pattern": "json-formatter.jozo.beer", "custom_domain": true }]
+}
