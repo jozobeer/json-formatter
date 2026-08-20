@@ -4,6 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>JSON整形・検証ツール</title>
+  <meta name="description" content="ブラウザ上でJSONを貼り付け、整形ボタン一発で2スペースインデントの読みやすい形式に変換します。構文エラーは位置情報付きで表示し、入力・出力は保存しません。">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "JSON整形・検証ツール",
+    "description": "ブラウザ上でJSONを貼り付け、整形ボタン一発で2スペースインデントの読みやすい形式に変換します。構文エラーは位置情報付きで表示し、入力・出力は保存しません。",
+    "url": "https://json-formatter.jozo.beer/",
+    "applicationCategory": "UtilitiesApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "JPY"
+    }
+  }
+  </script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d7377'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='ui-monospace,monospace' font-size='16' font-weight='700' fill='%23e8f6f6'%3E%7B%7D%3C/text%3E%3C/svg%3E">
   <style>
     :root {
@@ -136,6 +152,49 @@
       overflow: auto;
     }
 
+    .docs {
+      margin-top: 2.5rem;
+    }
+
+    .docs h2 {
+      margin: 0 0 0.6rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .docs section + section {
+      margin-top: 1.75rem;
+    }
+
+    .docs ol,
+    .docs dl {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .docs ol {
+      padding-left: 1.25rem;
+    }
+
+    .docs li + li {
+      margin-top: 0.35rem;
+    }
+
+    .docs dt {
+      margin-top: 0.85rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .docs dt:first-child {
+      margin-top: 0;
+    }
+
+    .docs dd {
+      margin: 0.2rem 0 0;
+    }
+
     footer {
       margin-top: 3rem;
       text-align: center;
@@ -160,6 +219,29 @@
 
     <div class="output-label" id="output-label">出力</div>
     <pre id="output" aria-labelledby="output-label"></pre>
+
+    <div class="docs">
+      <section aria-labelledby="how-to">
+        <h2 id="how-to">使い方</h2>
+        <ol>
+          <li>入力欄に JSON 文字列を貼り付ける</li>
+          <li>「整形」ボタンを押す</li>
+          <li>成功すると出力に 2 スペースインデントの JSON が表示される。構文エラーなら位置情報付きのメッセージが出る</li>
+        </ol>
+      </section>
+
+      <section aria-labelledby="faq">
+        <h2 id="faq">FAQ</h2>
+        <dl>
+          <dt>入力した JSON は保存されますか？</dt>
+          <dd>保存しません。ページを再読み込みすると入力・出力・エラーはすべて空に戻ります。</dd>
+          <dt>どんな JSON を整形できますか？</dt>
+          <dd>ブラウザの JSON.parse が通る標準 JSON です。末尾カンマやコメントはエラーになります。</dd>
+          <dt>エラーメッセージの位置情報とは何ですか？</dt>
+          <dd>JSON.parse が返すメッセージに含まれる位置です。どこで構文が崩れているかの目安になります。</dd>
+        </dl>
+      </section>
+    </div>
 
     <footer>
       <a href="https://apps.jozo.beer">apps.jozo.beer</a>

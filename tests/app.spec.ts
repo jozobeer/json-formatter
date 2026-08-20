@@ -74,3 +74,52 @@ test("AC4: 再読み込み後は初期状態で永続化されない", async ({ 
   expect(storage.local).toBe(0);
   expect(storage.session).toBe(0);
 });
+
+function collectJsonLdNodes(parsed: unknown): Record<string, unknown>[] {
+  if (Array.isArray(parsed)) {
+    return parsed.flatMap(collectJsonLdNodes);
+  }
+  if (parsed && typeof parsed === "object") {
+    const obj = parsed as Record<string, unknown>;
+    const nested = obj["@graph"];
+    if (nested) return collectJsonLdNodes(nested);
+    return [obj];
+  }
+  return [];
+}
+
+function typeIncludes(node: Record<string, unknown>, type: string): boolean {
+  const t = node["@type"];
+  return t === type || (Array.isArray(t) && t.includes(type));
+}
+
+test("SEO: meta description が空でなく存在する", async ({ page }) => {
+  await page.goto(APP_URL);
+  const description = page.locator('meta[name="description"]');
+  await expect(description).toHaveAttribute("content", /.+/);
+});
+
+test("SEO: JSON-LD に WebApplication の必須フィールドがある", async ({ page }) => {
+  await page.goto(APP_URL);
+  const scripts = page.locator('script[type="application/ld+json"]');
+  await expect(scripts).not.toHaveCount(0);
+
+  const texts = await scripts.allTextContents();
+  const nodes = texts.flatMap((text) => collectJsonLdNodes(JSON.parse(text)));
+  const app = nodes.find((node) => typeIncludes(node, "WebApplication"));
+
+  expect(app).toBeTruthy();
+  expect(String(app?.name ?? "").trim()).not.toBe("");
+  expect(String(app?.description ?? "").trim()).not.toBe("");
+  expect(String(app?.url ?? "").trim()).not.toBe("");
+  expect(String(app?.applicationCategory ?? "").trim()).not.toBe("");
+
+  const offers = app?.offers as Record<string, unknown> | undefined;
+  expect(String(offers?.price ?? "")).toBe("0");
+});
+
+test("SEO: 使い方とFAQのセクションが存在する", async ({ page }) => {
+  await page.goto(APP_URL);
+  await expect(page.getByRole("heading", { name: "使い方" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "FAQ" })).toBeVisible();
+});
